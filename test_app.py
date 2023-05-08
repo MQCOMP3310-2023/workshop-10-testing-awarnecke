@@ -81,7 +81,11 @@ class TestWebApp(unittest.TestCase):
         assert response.status_code == 200 
 
     def test_xss_vulnerability(self):
-        # TODO: Can we store javascript tags in the username field?
-        assert False
+        response = self.client.post('/signup', data = {
+            'email' : 'user@test.com',
+            'name' : '<script>window.location.replace("/pwned")</script>',
+            'password' : 'test123'
+        }, follow_redirects = True)
+        assert response.request.path != '/pwned'
 
 
